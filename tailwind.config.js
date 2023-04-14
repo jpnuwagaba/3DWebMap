@@ -6,12 +6,17 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
+    fontFamily: {
+      'manrope': ["'Manrope', sans-serif"]
+    },
     extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-      },
+      colors: {
+        lightRed: '#ed2228',
+        darkRed: '#951a1d',
+        lightGreen: '#16a751',
+        darkGreen: '#134c24',
+        beige: '#d2ac68',
+      }
     },
   },
   plugins: [],

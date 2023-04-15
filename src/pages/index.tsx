@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import Layout from '@/components/Layout'
 import Footer from '@/components/Footer'
 import MapModel from '@/model/MapModel'
+// import Map from '@/model/Map'
 import TopBar from '@/components/TopBar'
 import { AiOutlineMenu, AiOutlineSearch, AiOutlineClose } from 'react-icons/ai'
 import { IoLocateSharp } from 'react-icons/io5'
@@ -20,13 +21,14 @@ export default function Home() {
   return (
     <div className='relative'>
       <MapModel />
+      {/* <Map /> */}
       {/* top bar */}
-      <div className="absolute z-20 top-0 w-full ">
+      <div className="absolute z-20 top-0 w-full">
         <div className=' flex justify-between items-center px-5 py-8'>
           <div onClick={() => setSideOptions(!sideOptions)} id='sideOptions' className='z-50'>
-            {sideOptions ? <AiOutlineMenu size={'1.5rem'} color='white' /> : <AiOutlineClose size={'1.5em'} color='black' />}
+            {sideOptions ? <AiOutlineMenu size={'1.5rem'} color='darkGreen' /> : <AiOutlineClose size={'1.5em'} color='darkGreen' />}
           </div>
-          <AiOutlineSearch size={'1.5rem'} color='white' />
+          <AiOutlineSearch size={'1.5rem'} color='darkGreen' />
           <div style={sideOptions ? { display: 'none' } : { display: 'block' }}
             className='absolute z-30 top-0 w-[70%] transition duration-300 ease-out -translate-x-5 pt-24 h-screen bg-white p-6 md:w-[50%] lg:w-[25%] '>
             <SideOptions />

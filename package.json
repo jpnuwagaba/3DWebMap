@@ -27,6 +27,7 @@
     "typescript": "5.0.4"
   },
   "devDependencies": {
+    "@types/mapbox-gl": "^2.7.10",
     "@types/three": "^0.150.1",
     "next-transpile-modules": "^10.0.0",
     "vite": "^4.2.1"

@@ -10,6 +10,7 @@ import { AiOutlineMenu, AiOutlineSearch, AiOutlineClose } from 'react-icons/ai'
 import { IoLocateSharp } from 'react-icons/io5'
 import { AiOutlineCompass } from 'react-icons/ai'
 import SideOptions from '@/components/SideOptions'
+import WebMap from '@/model/WebMap'
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -20,7 +21,8 @@ export default function Home() {
 
   return (
     <div className='relative'>
-      <MapModel />
+      {/* <MapModel /> */}
+      <WebMap />
       {/* <Map /> */}
       {/* top bar */}
       <div className="absolute z-20 top-0 w-full">
@@ -28,7 +30,7 @@ export default function Home() {
           <div onClick={() => setSideOptions(!sideOptions)} id='sideOptions' className='z-50'>
             {sideOptions ? <AiOutlineMenu size={'1.5rem'} color='darkGreen' /> : <AiOutlineClose size={'1.5em'} color='darkGreen' />}
           </div>
-          <AiOutlineSearch size={'1.5rem'} color='darkGreen' />
+          {/* <AiOutlineSearch size={'1.5rem'} color='darkGreen' /> */}
           <div style={sideOptions ? { display: 'none' } : { display: 'block' }}
             className='absolute z-30 top-0 w-[70%] transition duration-300 ease-out -translate-x-5 pt-24 h-screen bg-white p-6 md:w-[50%] lg:w-[25%] '>
             <SideOptions />

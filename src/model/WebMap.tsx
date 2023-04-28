@@ -1,56 +1,119 @@
-import { useState, useEffect, useRef } from 'react'
-import mapboxgl from 'mapbox-gl'
-import Head from 'next/head'
+import React, { useRef, useEffect } from 'react';
+import mapboxgl from 'mapbox-gl';
+import * as THREE from 'three';
+import "mapbox-gl/dist/mapbox-gl.css";
 
-mapboxgl.accessToken = 'pk.eyJ1IjoianBudXdhZ2FiYSIsImEiOiJjbGduMmlrbDgwYm9mM21tbWdkZ3hodjc4In0.Q9vUbRDFh0Q7rc8o8Al8pA'
+mapboxgl.accessToken = 'pk.eyJ1IjoianBudXdhZ2FiYSIsImEiOiJjbGduMmlrbDgwYm9mM21tbWdkZ3hodjc4In0.Q9vUbRDFh0Q7rc8o8Al8pA';
+
+const customLayer = (map, gl) => {
+  const camera = new THREE.PerspectiveCamera();
+  const scene = new THREE.Scene();
+
+  const directionalLight = new THREE.DirectionalLight(0xffffff);
+  directionalLight.position.set(0, -70, 100).normalize();
+  scene.add(directionalLight);
+
+  const directionalLight2 = new THREE.DirectionalLight(0xffffff);
+  directionalLight2.position.set(0, 70, 100).normalize();
+  scene.add(directionalLight2);
+
+  const loader = new THREE.GLTFLoader();
+  loader.load('../model/buildings.gltf', (gltf) => {
+    scene.add(gltf.scene);
+  });
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas: map.getCanvas(),
+    context: gl,
+    antialias: true
+  });
+
+  renderer.autoClear = false;
+
+  const modelOrigin = [32.56275, 0.327345];
+  const modelAltitude = 0;
+  const modelRotate = [Math.PI / 2, 0, 0];
+
+  const modelAsMercatorCoordinate = mapboxgl.MercatorCoordinate.fromLngLat(modelOrigin, modelAltitude);
+
+  // transformation parameters to position, rotate and scale the 3D model onto the map
+  const modelTransform = {
+    translateX: modelAsMercatorCoordinate.x,
+    translateY: modelAsMercatorCoordinate.y,
+    translateZ: modelAsMercatorCoordinate.z,
+    rotateX: modelRotate[0],
+    rotateY: modelRotate[1],
+    rotateZ: modelRotate[2],
+    scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
+  };
+
+  return {
+    id: '3d-model',
+    type: 'custom',
+    renderingMode: '3d',
+    onAdd: () => {},
+    render: (gl, matrix) => {
+      const rotationX = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, 0), modelTransform.rotateX);
+      const rotationY = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), modelTransform.rotateY);
+      const rotationZ = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 0, 1), modelTransform.rotateZ);
+
+      const m = new THREE.Matrix4().fromArray(matrix);
+      const l = new THREE.Matrix4().makeTranslation(
+        modelTransform.translateX,
+        modelTransform.translateY,
+        modelTransform.translateZ,
+      ).scale(new THREE.Vector3(
+        modelTransform.scale,
+        -modelTransform.scale,
+        modelTransform.scale
+      )).multiply(rotationX).multiply(rotationY).multiply(rotationZ);
+
+      camera.projectionMatrix = m.multiply(l);
+      renderer.resetState();
+      renderer.render(scene, camera);
+      map.triggerRepaint();
+    }
+  };
+};
 
 const WebMap = () => {
-  const mapContainer = useRef(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [searchResult, setSearchResult] = useState(null)
+
+  const mapContainer = useRef();
 
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [32.568740, 0.333674], // Makerere University coordinates
-      zoom: 10,
-      pitch: 45, // 3D view
-      bearing: -17.6, // 3D view
+      style: 'mapbox://styles/mapbox/outdoors-v11',
+      center: [32.568146, 0.333975],
+      zoom: 16,
+      pitch: 60
     });
 
-    // add navigation control
-    const nav = new mapboxgl.NavigationControl()
-    map.addControl(nav)
+    const THREE = window.THREE;
 
-    // fly to makerere university on load
-    map.flyTo({
-      center: [32.568740, 0.333674], // Makerere University coordinates
-      zoom: 17,
-      pitch: 45,
-      bearing: -17.6,
-      speed: 0.7,
-      curve: 1,
-    })
+    map.on('style-load', () => {
+      map.addLayer(customLayer(map, gl), 'waterway-label');
+    });
 
-    function rotateCamera(timestamp) {
-      map.rotateTo((timestamp / 100) % 360, { duration: 0 });
-      requestAnimationFrame(rotateCamera);
-    }
-
-    map.on('load', () => {
-      rotateCamera(0);
-    })
-
-    // Clean up on unmount
-    return () => map.remove()
-  }, [])
+  }, []);
 
   return (
-    <>
-      <div className="w-screen h-screen" ref={mapContainer} />
-    </>
+    <div ref={mapContainer} style={{ width: '100%', height: '100vh' }} />
   );
-}
+};
 
 export default WebMap;
+
+
+// mapbox://styles/mapbox/streets-v11
+// mapbox://styles/mapbox/outdoors-v11
+// mapbox://styles/mapbox/light-v10
+// mapbox://styles/mapbox/dark-v10
+// mapbox://styles/mapbox/satellite-v9
+// mapbox://styles/mapbox/satellite-streets-v11
+// mapbox://styles/mapbox/navigation-preview-day-v4
+// mapbox://styles/mapbox/navigation-preview-night-v4
+// mapbox://styles/mapbox/navigation-guidance-day-v4
+// mapbox://styles/mapbox/navigation-guidance-night-v4
+
+/*ref={mapContainer}*/

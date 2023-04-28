@@ -11,6 +11,8 @@ import { IoLocateSharp } from 'react-icons/io5'
 import { AiOutlineCompass } from 'react-icons/ai'
 import SideOptions from '@/components/SideOptions'
 import WebMap from '@/model/WebMap'
+import Head from 'next/head'
+import BuildingsLayer from '@/model/BuildingsLayer'
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -21,7 +23,11 @@ export default function Home() {
 
   return (
     <div className='relative'>
+      <Head>
+        <title>Makerere Smart Campus</title>
+      </Head>
       {/* <MapModel /> */}
+      {/* <BuildingsLayer /> */}
       <WebMap />
       {/* <Map /> */}
       {/* top bar */}
@@ -51,9 +57,9 @@ export default function Home() {
         </div>
       </div>
       {/* footer */}
-      <div className='absolute z-50 bottom-0 px-5 py-2 bg-darkRed w-full text-white'>
+      {/* <div className='absolute z-50 bottom-0 px-5 py-2 bg-darkRed w-full text-white'>
         <Footer />
-      </div>
+      </div> */}
     </div>
   )
 }

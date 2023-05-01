@@ -5,7 +5,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 mapboxgl.accessToken = 'pk.eyJ1IjoianBudXdhZ2FiYSIsImEiOiJjbGduMmlrbDgwYm9mM21tbWdkZ3hodjc4In0.Q9vUbRDFh0Q7rc8o8Al8pA';
 
-const customLayer = (map, gl) => {
+const customLayer = (map: mapboxgl.Map, gl: any) => {
   const camera = new THREE.PerspectiveCamera();
   const scene = new THREE.Scene();
 

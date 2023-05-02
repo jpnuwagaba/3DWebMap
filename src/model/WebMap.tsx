@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
 import * as THREE from 'three';
 import "mapbox-gl/dist/mapbox-gl.css";
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoianBudXdhZ2FiYSIsImEiOiJjbGduMmlrbDgwYm9mM21tbWdkZ3hodjc4In0.Q9vUbRDFh0Q7rc8o8Al8pA';
 
@@ -17,7 +18,7 @@ const customLayer = (map: mapboxgl.Map, gl: any) => {
   directionalLight2.position.set(0, 70, 100).normalize();
   scene.add(directionalLight2);
 
-  const loader = new THREE.GLTFLoader();
+  const loader = new GLTFLoader();
   loader.load('../model/buildings.gltf', (gltf) => {
     scene.add(gltf.scene);
   });
@@ -30,7 +31,7 @@ const customLayer = (map: mapboxgl.Map, gl: any) => {
 
   renderer.autoClear = false;
 
-  const modelOrigin = [32.56275, 0.327345];
+  const modelOrigin: [number, number] = [32.56275, 0.327345];
   const modelAltitude = 0;
   const modelRotate = [Math.PI / 2, 0, 0];
 
@@ -52,16 +53,16 @@ const customLayer = (map: mapboxgl.Map, gl: any) => {
     type: 'custom',
     renderingMode: '3d',
     onAdd: () => {},
-    render: (gl, matrix) => {
+    render: (gl: any, matrix: number[] | ArrayLike<number>) => {
       const rotationX = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, 0), modelTransform.rotateX);
       const rotationY = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), modelTransform.rotateY);
       const rotationZ = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 0, 1), modelTransform.rotateZ);
 
       const m = new THREE.Matrix4().fromArray(matrix);
       const l = new THREE.Matrix4().makeTranslation(
-        modelTransform.translateX,
-        modelTransform.translateY,
-        modelTransform.translateZ,
+        modelTransform.translateX ?? 0,
+        modelTransform.translateY ?? 0,
+        modelTransform.translateZ ?? 0,
       ).scale(new THREE.Vector3(
         modelTransform.scale,
         -modelTransform.scale,
@@ -78,11 +79,13 @@ const customLayer = (map: mapboxgl.Map, gl: any) => {
 
 const WebMap = () => {
 
-  const mapContainer = useRef();
+  // const mapContainer = useRef();
+  const mapContainer = React.useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
     const map = new mapboxgl.Map({
-      container: mapContainer.current,
+      container: mapContainer.current!,
       style: 'mapbox://styles/mapbox/outdoors-v11',
       center: [32.568146, 0.333975],
       zoom: 16,
